@@ -2,3 +2,5 @@
 java_download/download/
 **/.keep
 **/target/
+**/.idea/
+**.gz

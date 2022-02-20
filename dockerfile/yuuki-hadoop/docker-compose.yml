@@ -1,0 +1,64 @@
+# 需创建名为my_network的网络，172.19.0.0/16
+# 这里没有绑定端口，因为直接访问容器的IP最方便
+version: '3.8'
+
+networks:
+  my_network:
+    external: true
+
+# hadoop1: NameNode, DataNode           |  NodeManager
+# hadoop2: DataNode                     |  ResourceManager, NodeManager
+# hadoop3: SecondaryNameNode, DataNode  |  NodeManager
+# hadoop4: DataNode                     |  NodeManager
+# 可以注意到，每个机器上都有DataNode和NodeManager，而NameNode，ResourceManager，SecondaryNameNode只有一个
+# 当然，它也可以不只有一个，使用高可用配置能让Namenode具有热备份，从而消除单点故障的存在（好耶！）
+# 问题：NameNode和ResourceManager是如何标识的？配置文件？执行hdfs namenode -format的机器？启动start-dfs.sh，start-yarn.sh的机器？
+services:  
+  hadoop1:
+    stdin_open: true 
+    tty: true 
+    build: .
+    hostname: hadoop1
+    container_name: hadoop1
+    volumes:
+      - ./share/:/share
+    networks:
+      my_network:
+        ipv4_address: 172.19.2.1
+  hadoop2:
+    stdin_open: true 
+    tty: true 
+    build: .
+    hostname: hadoop2
+    container_name: hadoop2
+    volumes:
+      - ./share/:/share
+    networks:
+      my_network:
+        ipv4_address: 172.19.2.2
+  hadoop3:
+    stdin_open: true 
+    tty: true 
+    build: .
+    hostname: hadoop3
+    container_name: hadoop3
+    volumes:
+      - ./share/:/share
+    networks:
+      my_network:
+        ipv4_address: 172.19.2.3
+
+  # 多加一台的话会占用更多内存，干脆只用3台
+  # hadoop4:
+  #   stdin_open: true 
+  #   tty: true 
+  #   build: .
+  #   hostname: hadoop4
+  #   container_name: hadoop4
+  #   volumes:
+  #     - ./share/:/share
+  #   networks:
+  #     my_network:
+  #       ipv4_address: 172.19.2.4
+  #   environment:
+  #     like_a_comment: hhh

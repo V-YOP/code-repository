@@ -14,7 +14,8 @@ import util.Util;
 import java.io.IOException;
 
 /**
- * Hadoop权威指南的第一个示例，输入数据为所谓的气温数据，每日三条，为特定格式的纯字符串    ，测试数据见URL，这数据肯定是假的。
+ * Hadoop权威指南的第一个示例，输入数据为所谓的气象数据，每日三条，为特定格式的纯字符串，测试数据见URL<br />
+ * 任务是统计每日的最高气温
  * @see <a href="https://github.com/tomwhite/hadoop-book/tree/master/input/ncdc/all">https://github.com/tomwhite/hadoop-book/tree/master/input/ncdc/all</a>
  */
 public class MaxDayTemperature {
@@ -46,7 +47,7 @@ public class MaxDayTemperature {
      * 通过substring(15, 23)获得日期，substring(88, 93)获得十倍的气温带正负号<br/>
      * Mapper的作用为将输入文件进行格式化，得到诸如&lt;19020203,35&gt;这样的KV
      */
-    public static class MaxDayTemperatureMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+    private static class MaxDayTemperatureMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
         private final Text outputK = new Text();
         private final IntWritable outputV = new IntWritable(1);
@@ -55,6 +56,10 @@ public class MaxDayTemperature {
             String originalStr = value.toString();
             String date = originalStr.substring(15, 23);
             int temperature = Integer.parseInt(originalStr.substring(87, 93)) / 10;
+
+            // 根据数据的格式，气温9999为无效数据
+            if (Math.abs(temperature) == 9999)
+                return;
 
             outputK.set(date);
             outputV.set(temperature);
@@ -66,7 +71,7 @@ public class MaxDayTemperature {
      * 挑选最大值的Reducer，写法就如字面上的一样
      * reducer拿到的值形如&lt;19020304, [20, 10, -20]&gt;，找到V中的最大值
      */
-    public static class MaxDayTemperatureReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+    private static class MaxDayTemperatureReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
         private final IntWritable res = new IntWritable();
 
         /**

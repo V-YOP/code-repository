@@ -6,6 +6,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.CombineTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import util.Util;
@@ -13,12 +14,11 @@ import util.Util;
 import java.io.IOException;
 
 /**
- * 经典的word count，还用说什么呢？<br />
- * 官方示例使用StringTokenizer，但其注释显示split("\\s")能完全替代它的作用，因此这里使用split来切分字符串
+ * 基于WordCount，测试多个小文件下使用WordCount会得到怎样的切片
  */
-public class WordCount {
+public class CombineSplit {
     // edit it!
-    private static final String DATA_PATH = "file:///Users/builder/data/wordcount";
+    private static final String DATA_PATH = "file:///Users/builder/data/combineSplit";
 
     private static final String INPUT_PATH = DATA_PATH + "/input";
     private static final String OUTPUT_PATH = DATA_PATH + "/output";
@@ -55,8 +55,13 @@ public class WordCount {
         Util.deleteFile(OUTPUT_PATH);
 
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "word count");
-        job.setJarByClass(WordCount.class);
+        Job job = Job.getInstance(conf, "Combine Split");
+
+        // !
+        job.setInputFormatClass(CombineTextInputFormat.class);
+        CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
+
+        job.setJarByClass(CombineSplit.class);
         job.setMapperClass(WordCountMapper.class);
         job.setCombinerClass(WordCountReducer.class);
         job.setReducerClass(WordCountReducer.class);
