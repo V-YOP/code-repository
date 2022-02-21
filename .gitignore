@@ -4,3 +4,4 @@ java_download/download/
 **/target/
 **/.idea/
 **.gz
+**.iml
