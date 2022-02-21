@@ -17,4 +17,5 @@ ENV PATH="/opt/zookeeper/bin:/opt/jdk8/bin:${PATH}" \
 
 COPY ./zoo.cfg ${ZOOKEEPER_HOME}/conf/
 COPY ./run.sh ${ZOOKEEPER_HOME}/
+ 
 ENTRYPOINT ${ZOOKEEPER_HOME}/run.sh

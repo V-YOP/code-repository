@@ -1,1 +1,1 @@
-创建Hadoop集群使用的Dockerfile和docker-compose.yml，使用了比较多的配置和关键字，值得纪念一下。
+创建Hadoop集群使用的Dockerfile和docker-compose.yml，使用了比较多的配置和关键字，值得记录一下。
