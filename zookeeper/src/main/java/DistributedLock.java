@@ -5,6 +5,7 @@ import org.junit.Before;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -83,5 +84,9 @@ public class DistributedLock {
             throw new RuntimeException("未获取到锁时无法解锁");
         zkClient.delete(currentSeq, -1);
         currentSeq = null;
+    }
+    <A, B> B reduce(List<A> lst, BiFunction<B, A, B> acc, B init) {
+        if (lst == null || lst.isEmpty()) return init;
+        return reduce(lst.subList(1, lst.size()), acc, acc.apply(init, lst.get(0)));
     }
 }

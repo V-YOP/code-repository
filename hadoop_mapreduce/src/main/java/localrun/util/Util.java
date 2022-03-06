@@ -1,4 +1,4 @@
-package util;
+package localrun.util;
 
 import java.io.File;
 
@@ -8,7 +8,6 @@ public class Util {
     /**
      * 递归删除文件夹
      * Java原生居然不提供删除非空文件夹的方法，被迫如此
-     * @param path
      */
     public static void deleteFile(String path) {
         if (path.startsWith("file://"))
