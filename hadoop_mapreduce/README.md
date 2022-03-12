@@ -1,3 +1,0 @@
-一些MapReduce示例，localrun包下的为在本地运行的示例。
-
-使用assembly进行打包以包含所有依赖。
