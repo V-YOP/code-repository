@@ -38,7 +38,24 @@ class CombineKey extends WritableComparable[CombineKey] {
     else -1 * allDelay.compareTo(o.allDelay)
   }
 
+
+
   override def toString = s"month=$month, tailNum=$tailNum, allDelay =$allDelay"
+
+  def canEqual(other: Any): Boolean = other.isInstanceOf[CombineKey]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: CombineKey =>
+      (that canEqual this) &&
+        month == that.month &&
+        tailNum == that.tailNum
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    val state = Seq(month, tailNum)
+    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  }
 }
 
 class LongestAirtimePerMonthMapper extends Mapper[LongWritable, Text, CombineKey, Text] {
@@ -59,9 +76,6 @@ class LongestAirtimePerMonthMapper extends Mapper[LongWritable, Text, CombineKey
 
 class LongestAirtimePerMonthReducer extends Reducer[CombineKey, Text, Text, Text] {
   override def reduce(key: CombineKey, values: lang.Iterable[Text], context: Reducer[CombineKey, Text, Text, Text]#Context) = {
-    import scala.jdk.CollectionConverters._
-    context.write(new Text("新分组"), new Text(""))
-    values.asScala
     // 在这里使用take函数会得到奇怪的结果
     var counter = 0
     val iter = values.iterator()
