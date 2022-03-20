@@ -9,9 +9,14 @@ import scala.reflect.io.Path
  * Spark的第一个示例即WordCount
  */
 object WordCount extends App {
-  val sc = new SparkContext(new SparkConf().setMaster("local").setAppName("Word Count"))
-  val lines = sc.textFile("/Users/aoymykn/CODE/code-repository/bigdata-learn/src/main/resources/tale-of-two-cities.txt")
-  val words = lines.flatMap(_.split("[ \\t,.?!'\"]").filter(_.nonEmpty).map((_, 1)))
-  val counts = words.reduceByKey(_+_).sortBy(_._2)
-  counts.saveAsTextFile("/Users/aoymykn/CODE/code-repository/bigdata-learn/src/main/resources/output")
+  def wordCount(sc : SparkContext, inputPath : String, outputPath : String) : Unit = {
+    val lines = sc.textFile(inputPath)
+    val wordPairs = lines.flatMap(_.split(" ")).map((_, 1))
+    val resultPairs = wordPairs.foldByKey(0)(_ + _)
+    resultPairs.saveAsTextFile(outputPath)
+  }
+  wordCount(new SparkContext(new SparkConf()
+    .setMaster("spark://spark.local:7077")
+    .setAppName("WordCount")
+    .set("spark.driver.host", "spark.local")), args(0), args(1))
 }

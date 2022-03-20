@@ -28,18 +28,6 @@
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.7.30</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-reflect -->
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-reflect</artifactId>
-      <version>2.13.8</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-library -->
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.13.8</version>
-    </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core -->
     <dependency>
       <groupId>org.apache.spark</groupId>
