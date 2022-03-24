@@ -40,6 +40,17 @@
       <artifactId>jackson-databind</artifactId>
       <version>2.12.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.13.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-reflect</artifactId>
+      <version>2.13.5</version>
+    </dependency>
+
     <!--
         &lt;!&ndash; https://mvnrepository.com/artifact/com.google.guava/guava &ndash;&gt;
         <dependency>

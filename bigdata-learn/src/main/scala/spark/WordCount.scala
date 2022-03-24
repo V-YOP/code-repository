@@ -15,8 +15,5 @@ object WordCount extends App {
     val resultPairs = wordPairs.foldByKey(0)(_ + _)
     resultPairs.saveAsTextFile(outputPath)
   }
-  wordCount(new SparkContext(new SparkConf()
-    .setMaster("spark://spark.local:7077")
-    .setAppName("WordCount")
-    .set("spark.driver.host", "spark.local")), args(0), args(1))
+  wordCount(new SparkContext(new SparkConf().setAppName("Word Count")), "file:///share/state.txt", "file:///share/output")
 }

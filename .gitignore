@@ -1,5 +1,6 @@
 **/*.class
 java_download/download/
+**/*.jar
 **/.keep
 **/target/
 **/.idea/
