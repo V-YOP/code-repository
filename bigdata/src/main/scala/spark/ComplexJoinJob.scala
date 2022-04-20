@@ -4,6 +4,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object ComplexJoinJob extends App {
   def someComplexJob(sc : SparkContext, deptInputPath : String, empInputPath : String, outputPath : String) : Unit = {
+
     val depts = sc.textFile(deptInputPath)
       .map(_.split(","))
       .map{cols => (cols(0), cols)}
