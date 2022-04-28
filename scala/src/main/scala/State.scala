@@ -110,9 +110,15 @@ case object State {
     case Nil => State((Nil, _))
     case x :: xs => x.map2(sequence(xs))(_ :: _)
   }
+  def get[S]: State[S, S] = State(s => (s, s))
+  def set[S](s: S): State[S, Unit] = State(_ => ((), s))
+  def modify[S](f: S => S): State[S, Unit] = for {
+    s <- get
+    _ <- set(f(s))
+  } yield ()
 }
 
-// 虽然书中没有要求，但是重新实现它们是非常有趣的
+// 虽然书中没有要求，但是重新实现它们是非常有趣的，也是为了实践经验
 case object StateRNG {
   type Rand[+A] = State[RNG, A]
   val int: Rand[Int] = State(_.nextInt)
@@ -124,12 +130,30 @@ case object StateRNG {
   val double: Rand[Double] = nonNegativeInt.map(_ / Int.MaxValue.toDouble)
 }
 
-object Main extends App {
-  import StateRNG._
-  val a = for {
-    a <- int
-    b <- nonNegativeInt
-    c <- double
-  } yield (a, b, c)
-  println(a(RNG(1000))._1)
+
+sealed trait Input
+case object Coin extends Input
+case object Turn extends Input
+
+case class Machine(locked: Boolean,coins: Int, candies: Int)
+
+case object Machine {
+  def operate(input: Input): State[Machine, (Int, Int)] = State { state =>
+    def deconstruct(state: Machine):((Int, Int), Machine) = ((state.coins, state.candies), state)
+    // 有三个参数：Input，locked，candies <= 0?
+    (input, state.locked, state.candies) match {
+      case (input, _, candies) if candies <= 0 => input match {
+        case Coin => deconstruct(state.copy(coins = state.coins + 1))
+        case Turn => deconstruct(state)
+      }
+      case (Coin, _, _) => deconstruct(state.copy(locked = false, coins = state.coins + 1))
+      case (Turn, false, candies) => deconstruct(state.copy(locked = true, candies = candies - 1))
+      case (Turn, true, _) => deconstruct(state)
+    }
+  }
+
+  def simulateMachine(input: List[Input]): State[Machine, (Int, Int)] = input match {
+    case Nil => State.get[Machine].map(s => (s.coins, s.candies))
+    case x :: xs => operate(x).flatMap(_ => simulateMachine(xs))
+  }
 }
