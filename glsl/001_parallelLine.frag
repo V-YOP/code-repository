@@ -11,6 +11,7 @@ uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
 
+// 使用后面的变换可以重新实现这里，只需要实现平行于Y轴的排线，并进行变换即可
 // dir: 方向向量
 // num: 直线数量，只有垂直和水平的时候才对得上，否则能看到的数量总是比该数量大
 // offset: 偏移量

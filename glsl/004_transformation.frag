@@ -81,17 +81,33 @@ void translateAndScaleExample1(out vec4 glFragColor, in float time, in vec2 st) 
     glFragColor = vec4(vec3(box(st1) + box(st2)), 1.);
 }
 
-// 旋转，这个有难度了
-// 这个怎么解释……
+// 旋转，这个直接抄作业了
 vec2 rotate(float angle, vec2 st) {
     return mat2(cos(angle),-sin(angle),
                 sin(angle),cos(angle)) * st;
 }
 
-void rotateExample(out vec4 glFragColor, in float time, in vec2 st) {
-    st = translate(vec2(.5), st); // 形状移动(.5, .5)
-    st = scale(vec2(.5), st); // 形状长宽变为1/2
+// 物体本身旋转    
+void rotateExample0(out vec4 glFragColor, in float time, in vec2 st) {
+    st = translate(vec2(.7), st);
+    st = scale(vec2(.3), st);
     st = rotate(time, st);
+    glFragColor = vec4(vec3(box(st)), 1.);
+}
+
+// 物体围绕中心旋转，且自己也旋转
+void rotateExample1(out vec4 glFragColor, in float time, in vec2 st) {
+    // 先转换原坐标系为-1, 1
+    st = st * 2. - 1.;
+    // 然后创造一个随时间旋转的视图
+    st = rotate(time, st);
+    // 将旋转的视图向它的x轴方向移动0.3（该向量的长度影响物体旋转的半径，角度影响物体朝向原点的方向）
+    // 比如，为(0.5, 0.5)时，会始终有一个角对着原点，为(0.3, 0.0)时，会有一个边对着原点
+    st = translate(vec2(.3, .0), st); 
+    // 对平移后的视图缩放为当前的0.1倍
+    st = scale(vec2(.1), st); // 形状长宽变为1/10
+    // 对缩放后的视图再次旋转
+    st = rotate(time * 2.1235, st); // 注释这一行就会潮汐锁定
     glFragColor = vec4(vec3(box(st)), 1.);
 }
 
@@ -101,6 +117,6 @@ void main() {
     // 缩放和平移例子
     translateAndScaleExample0(gl_FragColor, st);
     translateAndScaleExample1(gl_FragColor, u_time, st);
-    rotateExample(gl_FragColor, u_time, st);
-    
+    rotateExample0(gl_FragColor, u_time, st);
+    rotateExample1(gl_FragColor, u_time, st);
 }
