@@ -20,6 +20,6 @@ void main() {
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
     // 默认情况下，每个像素都有自己的随机数
     // 而使用floor能够生成块状的随机
-    st = floor(st * 50.); // 50 x 50 的随机（跟基岩似的）
+    st = floor(st * 50. + u_time); // 50 x 50 的随机（跟基岩似的）
     gl_FragColor = vec4(vec3(random(st)),1.0);
 }
